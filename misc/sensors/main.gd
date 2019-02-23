@@ -138,3 +138,5 @@ func _process(delta):
 	gyro_and_grav.transform.basis = drift_correction(new_basis, grav)
 	
 	
+func _on_Quit_pressed():
+	get_tree().quit()
