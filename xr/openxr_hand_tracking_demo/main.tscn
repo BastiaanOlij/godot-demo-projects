@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://br3bss6kac8pa"]
+[gd_scene load_steps=19 format=3 uid="uid://br3bss6kac8pa"]
 
 [ext_resource type="PackedScene" uid="uid://d22k0sp2hinew" path="res://assets/gltf/LeftHandHumanoid.gltf" id="2_3hxem"]
 [ext_resource type="Script" uid="uid://dpqdbsepdkd4h" path="res://start_vr.gd" id="2_5rtkn"]
@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://hanl00aqvu7u" path="res://objects/table.tscn" id="6_rfmma"]
 [ext_resource type="PackedScene" uid="uid://cerkxyasq8t8b" path="res://objects/box.tscn" id="7_6sqt7"]
 [ext_resource type="Script" uid="uid://dxi1173oqpsr5" path="res://hand_mesh.gd" id="7_yj2fr"]
+[ext_resource type="Script" uid="uid://mpw6mwu1cgwc" path="res://addons/common/input_helpers/pinch_detector.gd" id="8_dg77c"]
 [ext_resource type="Script" uid="uid://bnt74t168r248" path="res://xr_hand_fallback_modifier_3d.gd" id="8_gdsnk"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_eyx45"]
@@ -108,6 +109,10 @@ mesh = SubResource("SphereMesh_d5x0p")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.05, 0, 0)
 pickup_action = "pickup"
 
+[node name="XRPinchDetector" type="Node3D" parent="XROrigin3D/LeftHandController"]
+script = ExtResource("8_dg77c")
+metadata/_custom_type_script = "uid://mpw6mwu1cgwc"
+
 [node name="RightHandController" type="XRController3D" parent="XROrigin3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 1, -0.5)
 tracker = &"right_hand"
@@ -122,6 +127,10 @@ skeleton = NodePath("../../LeftHandController")
 [node name="PickupHandler" parent="XROrigin3D/RightHandController" instance=ExtResource("3_sg1io")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.05, 0, 0)
 pickup_action = "pickup"
+
+[node name="XRPinchDetector" type="Node3D" parent="XROrigin3D/RightHandController"]
+script = ExtResource("8_dg77c")
+metadata/_custom_type_script = "uid://mpw6mwu1cgwc"
 
 [node name="LeftHandMesh" type="XRNode3D" parent="XROrigin3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 1, -0.5)
@@ -184,6 +193,13 @@ active = true
 influence = 1.0
 script = ExtResource("8_gdsnk")
 grip_action = "pickup"
+
+[connection signal="pinch_held" from="XROrigin3D/LeftHandController/XRPinchDetector" to="Table/LeftHandInfo" method="_on_pinch_held"]
+[connection signal="pinch_released" from="XROrigin3D/LeftHandController/XRPinchDetector" to="Table/LeftHandInfo" method="_on_pinch_released"]
+[connection signal="pinch_tapped" from="XROrigin3D/LeftHandController/XRPinchDetector" to="Table/LeftHandInfo" method="_on_pinch_tapped"]
+[connection signal="pinch_held" from="XROrigin3D/RightHandController/XRPinchDetector" to="Table/RightHandInfo" method="_on_pinch_held"]
+[connection signal="pinch_released" from="XROrigin3D/RightHandController/XRPinchDetector" to="Table/RightHandInfo" method="_on_pinch_released"]
+[connection signal="pinch_tapped" from="XROrigin3D/RightHandController/XRPinchDetector" to="Table/RightHandInfo" method="_on_pinch_tapped"]
 
 [editable path="XROrigin3D/LeftHandMesh/LeftHandHumanoid2"]
 [editable path="XROrigin3D/RightHandMesh/RightHandHumanoid2"]

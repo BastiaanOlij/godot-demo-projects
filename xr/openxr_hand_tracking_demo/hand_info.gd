@@ -4,8 +4,17 @@ extends Node3D
 
 @export var fallback_mesh : Node3D
 
+var _log : Array[String]
+var _max_log_entries : int = 5
+
+func add_to_log(line : String):
+	_log.push_back(line)
+
+	while _log.size() > _max_log_entries:
+		_log.pop_front()
+
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
+func _process(_delta):
 	var text = ""
 
 	if hand == 0:
@@ -64,4 +73,21 @@ func _process(delta):
 	else:
 		text += "\nNo hand tracker found!\n"
 
+	if not _log.is_empty():
+		text += "\n"
+		for entry in _log:
+			text += entry + "\n"
+
 	$Info.text = text
+
+
+func _on_pinch_tapped(_controller):
+	add_to_log("Pinch tapped")
+
+
+func _on_pinch_held(_controller):
+	add_to_log("Pinch held")
+
+
+func _on_pinch_released(_controller, was_tapped, was_held):
+	add_to_log("Pinch released" + (", was tapped" if was_tapped else "") + (", was held" if was_held else ""))
